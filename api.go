@@ -9,22 +9,22 @@ import (
 func (c *client) GetPrice(ctx context.Context, pair string) (Data, error) {
 	path := fmt.Sprintf("last_price/%s", pair)
 
-	resp, err := c.getResponse(path, ctx)
+	data, err := c.getResponse(path, ctx)
 	if err != nil {
 		return nil, err
 	}
-	return resp, nil
+	return data, nil
 }
 
 func (c *client) GetTicker(ctx context.Context, pair string) (Data, error) {
 	path := fmt.Sprintf("ticker/%s", pair)
 
-	resp, err := c.getResponse(path, ctx)
+	data, err := c.getResponse(path, ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp, nil
+	return data, nil
 }
 
 func (c *client) getResponse(path string, ctx context.Context) (Data, error) {
@@ -33,20 +33,18 @@ func (c *client) getResponse(path string, ctx context.Context) (Data, error) {
 		return nil, err
 	}
 
+	var data Data
 	switch s := strings.Split(path, "/"); s[0] {
-
 	case "last_price":
-		var data = new(Price)
-		if err := data.encode(rawMsg); err != nil {
+		data = new(Price)
+		if err := data.unmshl(rawMsg); err != nil {
 			return nil, err
 		}
-		return data, nil
 	case "ticker":
-		var data = new(Ticker)
-		if err := data.encode(rawMsg); err != nil {
+		data = new(Ticker)
+		if err := data.unmshl(rawMsg); err != nil {
 			return nil, err
 		}
-		return data, nil
 	}
-	return nil, nil
+	return data, nil
 }

@@ -12,8 +12,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+// BaseUrl is an endpoint of api
 const BaseUrl = "https://api.zaif.jp/api/1/%s"
 
+// Client interfaces is an interface for client
 type Client interface {
 	GetPrice(ctx context.Context, pair string) (Data, error)
 	GetTicker(ctx context.Context, pair string) (Data, error)
@@ -21,6 +23,7 @@ type Client interface {
 
 type client struct{}
 
+// New cliates a new client
 func New() Client {
 	return &client{}
 }
@@ -33,18 +36,18 @@ func (c *client) do(ctx context.Context, method, path string, body io.Reader) (j
 		return nil, err
 	}
 
+	// header and context are set
 	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{Timeout: time.Duration(10) * time.Second}
-
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
-
 	defer resp.Body.Close()
 
+	// status code is checked
 	if resp.StatusCode != http.StatusOK {
 		format := "can not send HTTP reqest with statuscode %d: %s"
 		msg, err := ioutil.ReadAll(resp.Body)

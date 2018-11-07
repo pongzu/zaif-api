@@ -5,7 +5,7 @@ import (
 )
 
 type Data interface {
-	encode(json.RawMessage) error
+	unmshl(json.RawMessage) error
 }
 
 type Price struct {
@@ -22,15 +22,16 @@ type Ticker struct {
 	Ask    float64 `json:"ask"`
 }
 
-func (p *Price) encode(rawMsg json.RawMessage) error {
+// unmshl allows to unmarshal rawmessage to Price structure
+func (p *Price) unmshl(rawMsg json.RawMessage) error {
 	if err := json.Unmarshal(rawMsg, p); err != nil {
 		return err
 	}
-
 	return nil
 }
 
-func (p *Ticker) encode(rawMsg json.RawMessage) error {
+// unmshl allows to unmarshal rawmessage to Ticker structure
+func (p *Ticker) unmshl(rawMsg json.RawMessage) error {
 	if err := json.Unmarshal(rawMsg, p); err != nil {
 		return err
 	}
