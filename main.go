@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 
@@ -28,11 +27,13 @@ func run() error {
 		if err != nil {
 			return err
 		}
+
 		pairs := res.(*Pairs)
 		for _, pair := range *pairs {
-			fmt.Println(pair.CurrencyPair)
+			if err := json.NewEncoder(os.Stdout).Encode(pair.CurrencyPair); err != nil {
+				return err
+			}
 		}
-
 	case "getprice":
 		cli := New()
 		res, err := cli.GetPrice(context.Background(), os.Args[2])
@@ -45,6 +46,15 @@ func run() error {
 	case "getticker":
 		cli := New()
 		res, err := cli.GetTicker(context.Background(), os.Args[2])
+		if err != nil {
+			return err
+		}
+		if err := out(res); err != nil {
+			return err
+		}
+	case "getTrades":
+		cli := New()
+		res, err := cli.GetTrades(context.Background(), os.Args[2])
 		if err != nil {
 			return err
 		}

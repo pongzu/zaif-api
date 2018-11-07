@@ -20,6 +20,7 @@ type Client interface {
 	GetPairs(ctx context.Context) (Data, error)
 	GetPrice(ctx context.Context, pair string) (Data, error)
 	GetTicker(ctx context.Context, pair string) (Data, error)
+	GetTrades(ctx context.Context, pair string) (Data, error)
 }
 
 type client struct{}

@@ -37,12 +37,22 @@ func (c *client) GetTicker(ctx context.Context, pair string) (Data, error) {
 	return data, nil
 }
 
+func (c *client) GetTrades(ctx context.Context, pair string) (Data, error) {
+	path := fmt.Sprintf("trades/%s", pair)
+
+	data, err := c.getResponse(path, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func (c *client) getResponse(path string, ctx context.Context) (Data, error) {
 	rawMsg, err := c.do(ctx, "GET", path, nil)
 	if err != nil {
 		return nil, err
 	}
-	// ok
 
 	var data Data
 	switch s := strings.Split(path, "/"); s[0] {
@@ -58,6 +68,11 @@ func (c *client) getResponse(path string, ctx context.Context) (Data, error) {
 		}
 	case "ticker":
 		data = new(Ticker)
+		if err := data.unmshl(rawMsg); err != nil {
+			return nil, err
+		}
+	case "trades":
+		data = new(Trades)
 		if err := data.unmshl(rawMsg); err != nil {
 			return nil, err
 		}
