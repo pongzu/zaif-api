@@ -6,6 +6,16 @@ import (
 	"strings"
 )
 
+func (c *client) GetPairs(ctx context.Context) (Data, error) {
+	path := fmt.Sprintf("currency_pairs/all")
+
+	data, err := c.getResponse(path, ctx)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 func (c *client) GetPrice(ctx context.Context, pair string) (Data, error) {
 	path := fmt.Sprintf("last_price/%s", pair)
 
@@ -32,9 +42,15 @@ func (c *client) getResponse(path string, ctx context.Context) (Data, error) {
 	if err != nil {
 		return nil, err
 	}
+	// ok
 
 	var data Data
 	switch s := strings.Split(path, "/"); s[0] {
+	case "currency_pairs":
+		data = new(Pairs)
+		if err := data.unmshl(rawMsg); err != nil {
+			return nil, err
+		}
 	case "last_price":
 		data = new(Price)
 		if err := data.unmshl(rawMsg); err != nil {

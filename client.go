@@ -17,6 +17,7 @@ const BaseUrl = "https://api.zaif.jp/api/1/%s"
 
 // Client interfaces is an interface for client
 type Client interface {
+	GetPairs(ctx context.Context) (Data, error)
 	GetPrice(ctx context.Context, pair string) (Data, error)
 	GetTicker(ctx context.Context, pair string) (Data, error)
 }
