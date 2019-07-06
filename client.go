@@ -1,4 +1,4 @@
-package main
+package zaif-api
 
 import (
 	"context"
@@ -25,7 +25,7 @@ type Client interface {
 
 type client struct{}
 
-// New cliates a new client
+// New creates a new client
 func New() Client {
 	return &client{}
 }

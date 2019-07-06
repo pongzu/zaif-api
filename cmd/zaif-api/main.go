@@ -2,15 +2,16 @@ package main
 
 import (
 	"context"
-	"encoding/json"
+	"flag"
+	"io"
 	"log"
 	"os"
 
 	"github.com/pkg/errors"
-	app  "github.com/pongzu/zaif-api"
+	zaif "github.com/pongzu/zaif-api"
 )
 
-var out = flag.String("out","", "output file. if user does not specify the output file, result will print out into stdout")
+var out = flag.String("out", "", "output file. if user does not specify the output file, result will print out into stdout")
 
 func main() {
 	if err := run(); err != nil {
@@ -23,13 +24,13 @@ func run() error {
 		return errors.New("specify the subcommand")
 	}
 
-	out, err := newOutputFile(*out) 
+	out, err := newOutputFile(*out)
 	if err != nil {
 		return errors.Wrap(err, "newOutputFile failed")
 	}
 
 	var (
-		cli = app.New()
+		cli = zaif.New()
 		ctx = context.Background()
 	)
 
@@ -51,13 +52,13 @@ func run() error {
 		if err != nil {
 			return errors.Wrap(err, "GetTicker failed")
 		}
-        out.Write(res)
+		out.Write(res)
 	case "getTrades":
 		res, err := cli.GetTrades(ctx, os.Args[2])
 		if err != nil {
 			return errors.Wrap(err, "GetTrades failed")
 		}
-        out.Write(res)
+		out.Write(res)
 	default:
 		return errors.Errorf("invalid command: %q", os.Args[1])
 	}
@@ -66,7 +67,7 @@ func run() error {
 
 func newOutputFile(out string) (io.Writer, error) {
 	if out == "" {
-		return os.Stdout, nil 
+		return os.Stdout, nil
 	}
 
 	f, err := os.Open(out)

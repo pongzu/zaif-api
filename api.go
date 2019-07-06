@@ -1,4 +1,4 @@
-package main
+package zaif-api
 
 import (
 	"context"

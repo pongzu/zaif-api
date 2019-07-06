@@ -1,8 +1,5 @@
-package main
+package zaif-api
 
-import (
-	"encoding/json"
-)
 
 type Pairs []struct {
 	IsToken      bool    `json:"is_token"`
@@ -22,9 +19,25 @@ type Pairs []struct {
 	ID           int     `json:"id"`
 }
 
-func (pairs *Pairs) unmshl(rawMsg json.RawMessage) error {
-	if err := json.Unmarshal(rawMsg, pairs); err != nil {
-		return err
-	}
-	return nil
+type Price struct {
+	Price float64 `json:"last_price"`
+}
+
+type Ticker struct {
+	Last   float64 `json:"last"`
+	High   float64 `json:"high"`
+	Low    float64 `json:"low"`
+	Vwap   float64 `json:"vwap"`
+	Volume float64 `json:"volume"`
+	Bid    float64 `json:"bid"`
+	Ask    float64 `json:"ask"`
+}
+
+type Trades []struct {
+	Date         int     `json:"date"`
+	Price        float64 `json:"price"`
+	Amount       float64 `json:"amount"`
+	Tid          int     `json:"tid"`
+	CurrencyPair string  `json:"currency_pair"`
+	TradeType    string  `json:"trade_type"`
 }
