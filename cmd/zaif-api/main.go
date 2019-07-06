@@ -7,7 +7,10 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
+	app  "github.com/pongzu/zaif-api"
 )
+
+var out = flag.String("out","", "output file. if user does not specify the output file, result will print out into stdout")
 
 func main() {
 	if err := run(); err != nil {
@@ -17,60 +20,58 @@ func main() {
 
 func run() error {
 	if len(os.Args) == 1 {
-		return errors.New("subcommand is missing")
+		return errors.New("specify the subcommand")
 	}
+
+	out, err := newOutputFile(*out) 
+	if err != nil {
+		return errors.Wrap(err, "newOutputFile failed")
+	}
+
+	var (
+		cli = app.New()
+		ctx = context.Background()
+	)
 
 	switch os.Args[1] {
 	case "getpairs":
-		cli := New()
-		res, err := cli.GetPairs(context.Background())
+		res, err := cli.GetPairs(ctx)
 		if err != nil {
-			return err
+			return errors.Wrap(err, "GetPairs failed")
 		}
-
-		pairs := res.(*Pairs)
-		for _, pair := range *pairs {
-			if err := json.NewEncoder(os.Stdout).Encode(pair.CurrencyPair); err != nil {
-				return err
-			}
-		}
+		out.Write(res)
 	case "getprice":
-		cli := New()
-		res, err := cli.GetPrice(context.Background(), os.Args[2])
+		res, err := cli.GetPrice(ctx, os.Args[2])
 		if err != nil {
-			return err
+			return errors.Wrap(err, "GetPrice failed")
 		}
-		if err := out(res); err != nil {
-			return err
-		}
+		out.Write(res)
 	case "getticker":
-		cli := New()
-		res, err := cli.GetTicker(context.Background(), os.Args[2])
+		res, err := cli.GetTicker(ctx, os.Args[2])
 		if err != nil {
-			return err
+			return errors.Wrap(err, "GetTicker failed")
 		}
-		if err := out(res); err != nil {
-			return err
-		}
+        out.Write(res)
 	case "getTrades":
-		cli := New()
-		res, err := cli.GetTrades(context.Background(), os.Args[2])
+		res, err := cli.GetTrades(ctx, os.Args[2])
 		if err != nil {
-			return err
+			return errors.Wrap(err, "GetTrades failed")
 		}
-		if err := out(res); err != nil {
-			return err
-		}
+        out.Write(res)
 	default:
-		return errors.Errorf("invaild command: %q", os.Args[1])
+		return errors.Errorf("invalid command: %q", os.Args[1])
 	}
 	return nil
 }
 
-//out outputs the json data encoded from go structure
-func out(res Data) error {
-	if err := json.NewEncoder(os.Stdout).Encode(res); err != nil {
-		return err
+func newOutputFile(out string) (io.Writer, error) {
+	if out == "" {
+		return os.Stdout, nil 
 	}
-	return nil
+
+	f, err := os.Open(out)
+	if err != nil {
+		return nil, errors.Wrap(err, "os.Open failed")
+	}
+	return f, nil
 }
