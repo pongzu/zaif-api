@@ -1,6 +1,5 @@
 package zaif
 
-
 type Pairs []struct {
 	IsToken      bool    `json:"is_token"`
 	Name         string  `json:"name"`
