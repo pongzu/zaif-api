@@ -2,80 +2,68 @@ package zaif
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"strings"
+	"net/http"
+
+	"github.com/pkg/errors"
 )
 
-func (c *client) GetPairs(ctx context.Context) (Data, error) {
+func (c *client) GetPairs(ctx context.Context) (*Pairs, error) {
 	path := fmt.Sprintf("currency_pairs/all")
 
-	data, err := c.getResponse(path, ctx)
+	jsonData, err := c.do(ctx, http.MethodGet, path, nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "client.do failed")
 	}
-	return data, nil
+
+	pairs := new(Pairs)
+	if err := json.Unmarshal(jsonData, pairs); err != nil {
+		return nil, errors.Wrap(err, "failed to json.Unmarshal")
+	}
+	return pairs, nil
 }
 
-func (c *client) GetPrice(ctx context.Context, pair string) (Data, error) {
+func (c *client) GetPrice(ctx context.Context, pair string) (*Price, error) {
 	path := fmt.Sprintf("last_price/%s", pair)
 
-	data, err := c.getResponse(path, ctx)
+	jsonData, err := c.do(ctx, http.MethodGet, path, nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "client.do failed")
 	}
-	return data, nil
+	price := new(Price)
+
+	if err := json.Unmarshal(jsonData, price); err != nil {
+		return nil, errors.Wrap(err, "failed to json.Unmarshal")
+	}
+	return price, nil
 }
 
-func (c *client) GetTicker(ctx context.Context, pair string) (Data, error) {
+func (c *client) GetTicker(ctx context.Context, pair string) (*Ticker, error) {
 	path := fmt.Sprintf("ticker/%s", pair)
 
-	data, err := c.getResponse(path, ctx)
+	jsonData, err := c.do(ctx, http.MethodGet, path, nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "client.do failed")
 	}
 
-	return data, nil
+	tiker := new(Ticker)
+	if err := json.Unmarshal(jsonData, tiker); err != nil {
+		return nil, errors.Wrap(err, "failed to json.Unmarshal")
+	}
+	return tiker, nil
 }
 
-func (c *client) GetTrades(ctx context.Context, pair string) (Data, error) {
+func (c *client) GetTrades(ctx context.Context, pair string) (*Trades, error) {
 	path := fmt.Sprintf("trades/%s", pair)
 
-	data, err := c.getResponse(path, ctx)
+	jsonData, err := c.do(ctx, http.MethodGet, path, nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "client.do failed")
 	}
-
-	return data, nil
-}
-
-func (c *client) getResponse(path string, ctx context.Context) (Data, error) {
-	rawMsg, err := c.do(ctx, "GET", path, nil)
-	if err != nil {
-		return nil, err
+	trades := new(Trades)
+	if err := json.Unmarshal(jsonData, trades); err != nil {
+		return nil, errors.Wrap(err, "failed to json.Unmarshal")
 	}
-
-	var data Data
-	switch s := strings.Split(path, "/"); s[0] {
-	case "currency_pairs":
-		data = new(Pairs)
-		if err := data.unmshl(rawMsg); err != nil {
-			return nil, err
-		}
-	case "last_price":
-		data = new(Price)
-		if err := data.unmshl(rawMsg); err != nil {
-			return nil, err
-		}
-	case "ticker":
-		data = new(Ticker)
-		if err := data.unmshl(rawMsg); err != nil {
-			return nil, err
-		}
-	case "trades":
-		data = new(Trades)
-		if err := data.unmshl(rawMsg); err != nil {
-			return nil, err
-		}
-	}
-	return data, nil
+	return trades, nil
 }

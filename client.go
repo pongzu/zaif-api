@@ -7,20 +7,19 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/pkg/errors"
 )
 
-// BaseUrl is an endpoint of api
-const BaseUrl = "https://api.zaif.jp/api/1/%s"
+// BaseURL is an endpoint of api
+const BaseURL = "https://api.zaif.jp/api/1/%s"
 
 // Client interfaces is an interface for client
 type Client interface {
-	GetPairs(ctx context.Context) (Data, error)
-	GetPrice(ctx context.Context, pair string) (Data, error)
-	GetTicker(ctx context.Context, pair string) (Data, error)
-	GetTrades(ctx context.Context, pair string) (Data, error)
+	GetPairs(ctx context.Context) (*Pairs, error)
+	GetPrice(ctx context.Context, pair string) (*Price, error)
+	GetTicker(ctx context.Context, pair string) (*Ticker, error)
+	GetTrades(ctx context.Context, pair string) (*Trades, error)
 }
 
 type client struct{}
@@ -31,36 +30,36 @@ func New() Client {
 }
 
 func (c *client) do(ctx context.Context, method, path string, body io.Reader) (json.RawMessage, error) {
-	url := fmt.Sprintf(BaseUrl, path)
+	url := fmt.Sprintf(BaseURL, path)
 
-	req, err := http.NewRequest(method, url, body)
+	client := &http.Client{}
+
+	r, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, errors.Wrap(err, "http.NewRequest failed")
+	}
+
+	// set context
+	r = r.WithContext(ctx)
+
+	res, err := client.Do(r)
 	if err != nil {
 		return nil, err
 	}
-
-	// header and context are set
-	req = req.WithContext(ctx)
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{Timeout: time.Duration(10) * time.Second}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+	defer res.Body.Close()
 
 	// status code is checked
-	if resp.StatusCode != http.StatusOK {
+	if res.StatusCode != http.StatusOK {
 		format := "can not send HTTP reqest with statuscode %d: %s"
-		msg, err := ioutil.ReadAll(resp.Body)
+		msg, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			msg = []byte("no message came from zaif_server")
 		}
-		return nil, errors.Errorf(format, resp.StatusCode, msg)
+		return nil, errors.Errorf(format, res.StatusCode, msg)
 	}
 
 	var rawMsg json.RawMessage
-	if err := json.NewDecoder(resp.Body).Decode(&rawMsg); err != nil {
+	if err := json.NewDecoder(res.Body).Decode(&rawMsg); err != nil {
 		return nil, err
 	}
 	return rawMsg, nil
