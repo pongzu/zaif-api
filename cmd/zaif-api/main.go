@@ -11,7 +11,7 @@ import (
 	zaif "github.com/pongzu/zaif-api"
 )
 
-var out = flag.String("out", "", "output file. if user does not specify the output file, result will print out into stdout")
+var out = flag.String("out", "", "output file. if user does not specify the output file, result will be printed out into stdout")
 
 func main() {
 	if err := run(); err != nil {
@@ -35,30 +35,30 @@ func run() error {
 	)
 
 	switch os.Args[1] {
-	case "getpairs":
+	case "get_pairs":
 		res, err := cli.GetPairs(ctx)
 		if err != nil {
 			return errors.Wrap(err, "GetPairs failed")
 		}
-		out.Write(res)
-	case "getprice":
+		res.WriteTo(out)
+	case "get_price":
 		res, err := cli.GetPrice(ctx, os.Args[2])
 		if err != nil {
 			return errors.Wrap(err, "GetPrice failed")
 		}
-		out.Write(res)
-	case "getticker":
+		res.WriteTo(out)
+	case "get_ticker":
 		res, err := cli.GetTicker(ctx, os.Args[2])
 		if err != nil {
 			return errors.Wrap(err, "GetTicker failed")
 		}
-		out.Write(res)
-	case "getTrades":
+		res.WriteTo(out)
+	case "get_rades":
 		res, err := cli.GetTrades(ctx, os.Args[2])
 		if err != nil {
 			return errors.Wrap(err, "GetTrades failed")
 		}
-		out.Write(res)
+		res.WriteTo(out)
 	default:
 		return errors.Errorf("invalid command: %q", os.Args[1])
 	}

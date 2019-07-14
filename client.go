@@ -16,10 +16,10 @@ const BaseURL = "https://api.zaif.jp/api/1/%s"
 
 // Client interfaces is an interface for client
 type Client interface {
-	GetPairs(ctx context.Context) (*Pairs, error)
-	GetPrice(ctx context.Context, pair string) (*Price, error)
-	GetTicker(ctx context.Context, pair string) (*Ticker, error)
-	GetTrades(ctx context.Context, pair string) (*Trades, error)
+	GetPairs(ctx context.Context) (Res, error)
+	GetPrice(ctx context.Context, pair string) (Res, error)
+	GetTicker(ctx context.Context, pair string) (Res, error)
+	GetTrades(ctx context.Context, pair string) (Res, error)
 }
 
 type client struct{}
@@ -31,7 +31,6 @@ func New() Client {
 
 func (c *client) do(ctx context.Context, method, path string, body io.Reader) (json.RawMessage, error) {
 	url := fmt.Sprintf(BaseURL, path)
-
 	client := &http.Client{}
 
 	r, err := http.NewRequest(method, url, body)

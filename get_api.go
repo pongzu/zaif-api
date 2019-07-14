@@ -18,7 +18,7 @@ func (c *client) GetPairs(ctx context.Context) (*Pairs, error) {
 	}
 
 	pairs := new(Pairs)
-	if err := json.Unmarshal(jsonData, pairs); err != nil {
+	if err := json.Unmarshal(jsonData, &pairs.pairs); err != nil {
 		return nil, errors.Wrap(err, "failed to json.Unmarshal")
 	}
 	return pairs, nil
@@ -36,6 +36,7 @@ func (c *client) GetPrice(ctx context.Context, pair string) (*Price, error) {
 	if err := json.Unmarshal(jsonData, price); err != nil {
 		return nil, errors.Wrap(err, "failed to json.Unmarshal")
 	}
+
 	return price, nil
 }
 
@@ -51,6 +52,7 @@ func (c *client) GetTicker(ctx context.Context, pair string) (*Ticker, error) {
 	if err := json.Unmarshal(jsonData, tiker); err != nil {
 		return nil, errors.Wrap(err, "failed to json.Unmarshal")
 	}
+
 	return tiker, nil
 }
 
@@ -61,8 +63,9 @@ func (c *client) GetTrades(ctx context.Context, pair string) (*Trades, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "client.do failed")
 	}
+
 	trades := new(Trades)
-	if err := json.Unmarshal(jsonData, trades); err != nil {
+	if err := json.Unmarshal(jsonData, &trades.trades); err != nil {
 		return nil, errors.Wrap(err, "failed to json.Unmarshal")
 	}
 	return trades, nil
