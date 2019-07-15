@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *client) GetPairs(ctx context.Context) (*Pairs, error) {
+func (c *client) GetPairs(ctx context.Context) (Res, error) {
 	path := fmt.Sprintf("currency_pairs/all")
 
 	jsonData, err := c.do(ctx, http.MethodGet, path, nil)
@@ -24,7 +24,7 @@ func (c *client) GetPairs(ctx context.Context) (*Pairs, error) {
 	return pairs, nil
 }
 
-func (c *client) GetPrice(ctx context.Context, pair string) (*Price, error) {
+func (c *client) GetPrice(ctx context.Context, pair string) (Res, error) {
 	path := fmt.Sprintf("last_price/%s", pair)
 
 	jsonData, err := c.do(ctx, http.MethodGet, path, nil)
@@ -40,7 +40,7 @@ func (c *client) GetPrice(ctx context.Context, pair string) (*Price, error) {
 	return price, nil
 }
 
-func (c *client) GetTicker(ctx context.Context, pair string) (*Ticker, error) {
+func (c *client) GetTicker(ctx context.Context, pair string) (Res, error) {
 	path := fmt.Sprintf("ticker/%s", pair)
 
 	jsonData, err := c.do(ctx, http.MethodGet, path, nil)
@@ -56,7 +56,7 @@ func (c *client) GetTicker(ctx context.Context, pair string) (*Ticker, error) {
 	return tiker, nil
 }
 
-func (c *client) GetTrades(ctx context.Context, pair string) (*Trades, error) {
+func (c *client) GetTrades(ctx context.Context, pair string) (Res, error) {
 	path := fmt.Sprintf("trades/%s", pair)
 
 	jsonData, err := c.do(ctx, http.MethodGet, path, nil)

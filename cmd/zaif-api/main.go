@@ -53,7 +53,7 @@ func run() error {
 			return errors.Wrap(err, "GetTicker failed")
 		}
 		res.WriteTo(out)
-	case "get_rades":
+	case "get_trades":
 		res, err := cli.GetTrades(ctx, os.Args[2])
 		if err != nil {
 			return errors.Wrap(err, "GetTrades failed")
