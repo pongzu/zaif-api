@@ -1,8 +1,8 @@
 package zaif
 
-
 import (
 	"fmt"
+	"io"
 )
 
 type Ticker struct {
@@ -15,7 +15,7 @@ type Ticker struct {
 	Ask    float64 `json:"ask"`
 }
 
-
 func (tiker *Ticker) WriteTo(w io.Writer) {
-
+	r := fmt.Sprintf("Last: %v High: %v Low: %v Volume: %v Bid: %v Ask: %", tiker.Last, tiker.High, tiker.Low, tiker.Volume, tiker.Bid, tiker.Ask)
+	w.Write([]byte(r))
 }
