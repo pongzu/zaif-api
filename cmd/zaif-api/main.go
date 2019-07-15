@@ -42,18 +42,27 @@ func run() error {
 		}
 		res.WriteTo(out)
 	case "get_price":
+		if os.Args[2] == "" {
+			return errors.New("specify the currency pair such as btc_jpy")
+		}
 		res, err := cli.GetPrice(ctx, os.Args[2])
 		if err != nil {
 			return errors.Wrap(err, "GetPrice failed")
 		}
 		res.WriteTo(out)
 	case "get_ticker":
+		if os.Args[2] == "" {
+			return errors.New("specify the currency pair such as btc_jpy")
+		}
 		res, err := cli.GetTicker(ctx, os.Args[2])
 		if err != nil {
 			return errors.Wrap(err, "GetTicker failed")
 		}
 		res.WriteTo(out)
 	case "get_trades":
+		if os.Args[2] == "" {
+			return errors.New("specify the currency pair such as btc_jpy")
+		}
 		res, err := cli.GetTrades(ctx, os.Args[2])
 		if err != nil {
 			return errors.Wrap(err, "GetTrades failed")
