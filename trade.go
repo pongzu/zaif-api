@@ -20,10 +20,10 @@ func (trades *Trades) WriteTo(w io.Writer) {
 	var bufString string
 	for i, trade := range trades.trades {
 		if i == 0 {
-			bufString += fmt.Sprintf("Date: %v Price: %v Amount: %v Tid: %v", trade.Date, trade.Price, trade.Amount, trade.Tid)
+			bufString += fmt.Sprintf("Date: %v円 Price: %v円 Amount: %v円 Tid: %v円", trade.Date, int(trade.Price), int(trade.Amount), trade.Tid)
 			continue
 		}
-		bufString += fmt.Sprintf("\nDate: %v Price: %v Amount: %v Tid: %v", trade.Date, trade.Price, trade.Amount, trade.Tid)
+		bufString += fmt.Sprintf("\nDate: %v円 Price: %v円 Amount: %v円 Tid: %v円", trade.Date, int(trade.Price), int(trade.Amount), trade.Tid)
 	}
 	w.Write([]byte(bufString))
 }

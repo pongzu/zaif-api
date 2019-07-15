@@ -48,12 +48,12 @@ func (c *client) GetTicker(ctx context.Context, pair string) (Res, error) {
 		return nil, errors.Wrap(err, "client.do failed")
 	}
 
-	tiker := new(Ticker)
-	if err := json.Unmarshal(jsonData, tiker); err != nil {
+	ticker := new(Ticker)
+	if err := json.Unmarshal(jsonData, ticker); err != nil {
 		return nil, errors.Wrap(err, "failed to json.Unmarshal")
 	}
 
-	return tiker, nil
+	return ticker, nil
 }
 
 func (c *client) GetTrades(ctx context.Context, pair string) (Res, error) {

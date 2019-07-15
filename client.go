@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/pkg/errors"
@@ -49,12 +48,7 @@ func (c *client) do(ctx context.Context, method, path string, body io.Reader) (j
 
 	// status code is checked
 	if res.StatusCode != http.StatusOK {
-		format := "can not send HTTP reqest with statuscode %d: %s"
-		msg, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			msg = []byte("no message came from zaif_server")
-		}
-		return nil, errors.Errorf(format, res.StatusCode, msg)
+		return nil, errors.Errorf("some error is occurred with status code: %d", res.StatusCode)
 	}
 
 	var rawMsg json.RawMessage

@@ -1,10 +1,8 @@
 package zaif
 
 import (
-	"bytes"
-	"encoding/binary"
-	"fmt"
 	"io"
+	"strconv"
 )
 
 type Price struct {
@@ -12,15 +10,7 @@ type Price struct {
 }
 
 func (price *Price) WriteTo(w io.Writer) {
-	bs := float64ToBytes(price.Price)
+	i := int(price.Price)
+	bs := []byte(strconv.Itoa(i) + "円")
 	w.Write(bs)
-}
-
-func float64ToBytes(f float64) []byte {
-	var buf bytes.Buffer
-	err := binary.Write(&buf, binary.BigEndian, f)
-	if err != nil {
-		fmt.Println("binary.Write failed:", err)
-	}
-	return buf.Bytes()
 }

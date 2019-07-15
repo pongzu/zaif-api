@@ -20,7 +20,7 @@ func (pairs *Pairs) WriteTo(w io.Writer) {
 			bufString += fmt.Sprintf("%d: %s", i, pair.Name)
 			continue
 		}
-		bufString += fmt.Sprintf("%d: %s", i, pair.Name)
+		bufString += fmt.Sprintf("\n%d: %s", i, pair.Name)
 	}
 	w.Write([]byte(bufString))
 }

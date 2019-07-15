@@ -15,7 +15,7 @@ type Ticker struct {
 	Ask    float64 `json:"ask"`
 }
 
-func (tiker *Ticker) WriteTo(w io.Writer) {
-	r := fmt.Sprintf("Last: %v High: %v Low: %v Volume: %v Bid: %v Ask: %", tiker.Last, tiker.High, tiker.Low, tiker.Volume, tiker.Bid, tiker.Ask)
+func (ticker *Ticker) WriteTo(w io.Writer) {
+	r := fmt.Sprintf("Last: %v円 High: %v Low円: %v円 Volume: %v円 Bid: %v円 Ask: %v円", int(ticker.Last), int(ticker.High), int(ticker.Low), int(ticker.Volume), int(ticker.Bid), int(ticker.Ask))
 	w.Write([]byte(r))
 }
