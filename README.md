@@ -9,6 +9,6 @@ go get github.com/pongzu/zaif-api
 
 # Example
 
-you can get current price of btc_jpy after executing a zaif-api get_price btc_jpy 
+you can get current price of btc_jpy after executing `zaif-api get_price btc_jpy `
 
 
