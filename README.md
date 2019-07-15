@@ -1,9 +1,5 @@
 # zaif-api
-zaif-api is a simple tool for getting crypto-currency information such as
-currency_pairs that zaif handles
-price of currency_pairs 
-ticker of currency_pairs 
-trades of currency_pairs 
+zaif-api is a simple tool for getting crypto-currency information
 
 # Installation
 
